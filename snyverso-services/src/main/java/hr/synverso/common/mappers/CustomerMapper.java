@@ -4,8 +4,6 @@ import hr.synverso.common.dto.CustomerBasicInfoDTO;
 import hr.synverso.common.dto.CustomerDTO;
 import hr.synverso.domain.Customer;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)

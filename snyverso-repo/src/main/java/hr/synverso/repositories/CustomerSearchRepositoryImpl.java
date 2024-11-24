@@ -33,7 +33,7 @@ public class CustomerSearchRepositoryImpl implements CustomerSearchRepository{
 		customerIdQuery.orderBy(getCustomerOrders(criteriaBuilder, root, pageable));
 		customerIdQuery.groupBy(root.get("id"));
 
-		List<Long> userIds = entityManager.createQuery(customerIdQuery)
+		List<Long> resultList = entityManager.createQuery(customerIdQuery)
 				.setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
 				.setMaxResults(pageable.getPageSize())
 				.getResultList();
@@ -42,18 +42,18 @@ public class CustomerSearchRepositoryImpl implements CustomerSearchRepository{
 
 		criteriaQuery.select(root).distinct(true);
 
-		criteriaQuery.where(criteriaBuilder.in(root.get("id")).value(userIds));
+		criteriaQuery.where(criteriaBuilder.in(root.get("id")).value(resultList));
 		criteriaQuery.orderBy(getCustomerOrders(criteriaBuilder, root, pageable));
 
 		List<Customer> customers = entityManager.createQuery(criteriaQuery).getResultList();
 
-		CriteriaQuery<Long> userCountQuery = criteriaBuilder.createQuery(Long.class);
-		Root<Customer> countRoot = userCountQuery.from(Customer.class);
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Customer> countRoot = countQuery.from(Customer.class);
 
-		userCountQuery.select(criteriaBuilder.countDistinct(countRoot));
-		userCountQuery.where(getWhereClause(countRoot, criteriaQuery, criteriaBuilder, criteria));
+		countQuery.select(criteriaBuilder.countDistinct(countRoot));
+		countQuery.where(getWhereClause(countRoot, criteriaQuery, criteriaBuilder, criteria));
 
-		Long count = entityManager.createQuery(userCountQuery).getSingleResult();
+		Long count = entityManager.createQuery(countQuery).getSingleResult();
 
 		return new PageImpl<>(customers, pageable, count);
 	}
